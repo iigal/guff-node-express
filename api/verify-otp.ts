@@ -7,7 +7,18 @@ const supabase = createClient(
 );
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
+  // CORS headers
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  if (req.method !== "POST") {
+    return res.status(405).json({ error: "Method not allowed" });
+  }
 
   try {
     const { phone, code, full_name } = req.body;
@@ -35,7 +46,7 @@ export default async function handler(req: any, res: any) {
       const insertRes = await supabase.from("users").insert([{ phone, full_name }]).select().single();
       user = insertRes.data;
     }
-    
+
     const sixMonthsInSeconds = 60 * 60 * 24 * 30 * 6;
     const token = jwt.sign({ sub: user.id, phone: user.phone }, process.env.JWT_SIGNING_SECRET!, {
       expiresIn: sixMonthsInSeconds,
