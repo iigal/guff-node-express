@@ -27,11 +27,15 @@ export default async function handler(req: any, res: any) {
     const { data: existingUsers } = await supabase.from("users").select("*").eq("phone", phone).limit(1);
 
     let user = existingUsers?.[0];
+
+    if (!user && !full_name) {
+      return res.status(400).json({ error: "Full name required for new users" });
+    }
     if (!user) {
       const insertRes = await supabase.from("users").insert([{ phone, full_name }]).select().single();
       user = insertRes.data;
     }
-
+    
     const sixMonthsInSeconds = 60 * 60 * 24 * 30 * 6;
     const token = jwt.sign({ sub: user.id, phone: user.phone }, process.env.JWT_SIGNING_SECRET!, {
       expiresIn: sixMonthsInSeconds,
