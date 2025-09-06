@@ -32,7 +32,7 @@ export default async function handler(req: any, res: any) {
       .limit(1);
 
     const otp = otps?.[0];
-    if (!otp || otp.code !== String(code)) return res.status(400).json({ error: "Invalid OTP" });
+    if (!otp || otp.code !== String(code)) return res.status(400).json({ error: "The OTP is invalid." });
     if (new Date(otp.expires_at) < new Date()) return res.status(400).json({ error: "OTP expired" });
 
     const { data: existingUsers } = await supabase.from("users").select("*").eq("phone", phone).limit(1);
