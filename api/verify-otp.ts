@@ -39,9 +39,10 @@ export default async function handler(req: any, res: any) {
 
     let user = existingUsers?.[0];
 
-    if (!user && !full_name) {
-      return res.status(400).json({ error: "Full name required for new users" });
-    }
+    // after correct otp, provision for full name
+    // if (!user && !full_name) {
+    //   return res.status(400).json({ error: "Full name required for new users" });
+    // }
     if (!user) {
       const insertRes = await supabase.from("users").insert([{ phone, full_name }]).select().single();
       user = insertRes.data;
