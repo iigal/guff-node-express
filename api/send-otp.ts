@@ -23,7 +23,7 @@ export default async function handler(req: any, res: any) {
     await supabase.from("otps").insert([{ phone, code, expires_at }]);
 
     const text = `Your OTP is: ${code}`;
-    const url = "https://sms.aakashsms.com/smsIv3/send";
+    const url = "https://sms.aakashsms.com/sms/v3/send";
 
     const params = new URLSearchParams();
     params.append("auth_token", process.env.AAKASHSMS_AUTH_TOKEN!);
